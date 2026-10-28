@@ -1,0 +1,42 @@
+name: testes
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  testes:
+    runs-on: ${{ matrix.so }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        so: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # O juiz responde as quatro perguntas pela DEFINICAO, sem saber como a
+      # divisao foi feita: proporcional, sem inveja, quanta inveja, e eficiente no
+      # sentido de Pareto. A ultima e a unica que precisa olhar todas as outras
+      # divisoes para ser respondida. E ha uma varredura dentro da varredura: nao
+      # um bolo, mas TODOS os bolos daquele tamanho.
+      - name: testes
+        run: dotnet test testes/Divisao.Testes/Divisao.Testes.csproj -c Release --nologo -v q
+
+      - name: em quantos bolos existe divisao sem inveja
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- existe
+
+      - name: quatro bolos varridos inteiros
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- bolos
+
+      - name: os protocolos contra a varredura
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- protocolos
+
+      - name: sem inveja contra proporcional
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- relacao
